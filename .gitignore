@@ -1,0 +1,31 @@
+# Project
+libs/*
+nbproject/
+build/
+nbbuild/
+dist/
+nbdist/
+nbactions.xml
+nb-configuration.xml
+
+# Java
+*.class
+
+# Package Files #
+*.jar
+*.war
+*.ear
+
+# OS X
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+
+
+# Thumbnails
+._*
+
+# Files that might appear on external disk
+.Spotlight-V100
+.Trashes
