@@ -30,28 +30,55 @@ public class Maze {
 		}
 
 		String filename = args[0];
-
 		Solver solver = new BreadthFirstSearch();
-
 		double startTime = System.nanoTime();
 
 		System.out.println("Parsing image file");
 
 		int[][] map = parseImage(filename);
-
 		double parseTime = System.nanoTime();
 
 		System.out.printf("Image file parsed. Elapsed %.3fs%n", (parseTime - startTime) / 1000000000.);
 
+		// default start and finish positions fits for grand1 maze
+		int[] start = {0, 1};
+		int[] finish = {map.length - 2, map[0].length - 1};
+
+		try {
+
+			for (int i = 0; i < args.length; i++) {
+
+				if (args[i].startsWith("--start")) {
+					start[0] = Integer.parseInt(args[i].substring("--start".length() + 1, args[i].indexOf(":")));
+					start[1] = Integer.parseInt(args[i].substring(args[i].indexOf(":") + 1));
+					
+				}
+
+				if (args[i].startsWith("--finish")) {
+					finish[0] = Integer.parseInt(args[i].substring("--finish".length() + 1, args[i].indexOf(":")));
+					finish[1] = Integer.parseInt(args[i].substring(args[i].indexOf(":") + 1));
+				}
+
+			}
+
+		} catch (NumberFormatException e) {
+			System.out.println("An error ocurred while parsing start and finish arguments.");
+			System.exit(0);
+		}
+		
 		System.out.println("Finding path");
 
-		Deque path = solver.findPath(map);
-
+		Deque path = solver.findPath(map, start, finish);
 		double findTime = System.nanoTime();
+		
+		if (path == null) {
+			System.out.println("No path found, sorry.");
+			System.exit(0);
+		}
 
 		System.out.printf("Path found. Size %d, elapsed %.3fs%n", path.size(), (findTime - parseTime) / 1000000000.);
 
-		if (args.length == 2) {
+		if (args.length == 2 && !args[1].startsWith("--")) {
 			writeFile(new File(args[1]), path);
 		}
 
@@ -78,8 +105,9 @@ public class Maze {
 			return map;
 
 		} catch (IOException ex) {
-			System.out.println("An error ocurred while reading image file.");
+			System.out.printf("An error ocurred while reading file '%s'.%n", filename);
 			Logger.getLogger(Maze.class.getName()).log(Level.SEVERE, null, ex);
+			System.exit(0);
 		}
 
 		return null;

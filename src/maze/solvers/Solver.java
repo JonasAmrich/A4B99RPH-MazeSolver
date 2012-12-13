@@ -12,5 +12,5 @@ import maze.utils.Coordinate;
  */
 public interface Solver {
 
-	Deque<Coordinate> findPath(int[][] _map);
+	Deque<Coordinate> findPath(int[][] _map, int[] start, int[] finish);
 }

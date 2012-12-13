@@ -17,7 +17,7 @@ public class BreadthFirstSearch implements Solver {
 	public static final int[] directions = {-1, 1, 0, 0};
 
 	@Override
-	public Deque<Coordinate> findPath(int[][] _map) {
+	public Deque<Coordinate> findPath(int[][] _map, int[] start, int[] finish) {
 
 		Map map = new Map(_map);
 
@@ -25,11 +25,8 @@ public class BreadthFirstSearch implements Solver {
 		// and is faster and more memory efficient than LinkedList
 		Deque<Node> queue = new ArrayDeque<Node>();
 
-		int sx = map.startPosition[0];
-		int sy = map.startPosition[1];
-
-		queue.add(new Node(sx, sy, null));
-		map.markVisited(sx, sy);
+		queue.add(new Node(start[0], start[1], null));
+		map.markVisited(start[0], start[1]);
 
 		Node node;
 		int i, x, y;
@@ -43,7 +40,7 @@ public class BreadthFirstSearch implements Solver {
 				y = node.y + directions[3 - i];
 
 				if (map.isInside(x, y) && map.isPassable(x, y) && !map.isVisited(x, y)) {
-					if (map.isFinal(x, y)) {
+					if (x == finish[0] && y == finish[1]) {
 						return constructPath(queue.getLast());
 					}
 
