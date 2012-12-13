@@ -1,8 +1,12 @@
-
+/*
+ * @copyright	Copyright (c) 2012 Jonas Amrich
+ */
 package maze;
 
 import java.awt.image.BufferedImage;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Deque;
 import java.util.logging.Level;
@@ -10,6 +14,7 @@ import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import maze.solvers.BreadthFirstSearch;
 import maze.solvers.Solver;
+import maze.utils.Coordinate;
 
 /**
  *
@@ -47,6 +52,10 @@ public class Maze {
 		
 		System.out.printf("Path found. Size %d, elapsed %.3fs%n", path.size(), (findTime - parseTime) / 1000000000.);
 		
+		if (args.length == 2) {
+			writeFile(new File(args[1]), path);
+		}
+		
 	}
 	
 	private static int[][] parseImage(String filename) {
@@ -75,6 +84,24 @@ public class Maze {
 		}
 		
 		return null;
+	}
+	
+	private static void writeFile(File file, Deque<Coordinate> path) {
+		
+		try {
+			BufferedWriter out = new BufferedWriter(new FileWriter(file));
+			
+			while (!path.isEmpty()) {
+				out.write(path.poll().toString());
+				out.newLine();
+			}
+			
+			out.close();
+			
+		} catch (IOException ex) {
+			System.out.println("An error ocurred while saving path to file.");
+			Logger.getLogger(Maze.class.getName()).log(Level.SEVERE, null, ex);
+		}
 	}
 	
 }
