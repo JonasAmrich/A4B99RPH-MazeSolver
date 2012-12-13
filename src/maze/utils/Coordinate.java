@@ -1,4 +1,6 @@
-
+/*
+ * @copyright	Copyright (c) 2012 Jonas Amrich
+ */
 package maze.utils;
 
 /**
@@ -7,8 +9,8 @@ package maze.utils;
  */
 public final class Coordinate {
 
-	final public int x;
-	final public int y;
+	public final int x;
+	public final int y;
 
 	public Coordinate(int x, int y) {
 		this.x = x;
@@ -19,5 +21,4 @@ public final class Coordinate {
 	public String toString() {
 		return x + ", " + y;
 	}
-
 }
