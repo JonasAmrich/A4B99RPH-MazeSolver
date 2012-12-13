@@ -4,7 +4,7 @@ package maze;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
+import java.util.Deque;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
@@ -41,7 +41,7 @@ public class Maze {
 		
 		System.out.println("Finding path");
 		
-		List path = solver.findPath(map);
+		Deque path = solver.findPath(map);
 		
 		double findTime = System.nanoTime();
 		

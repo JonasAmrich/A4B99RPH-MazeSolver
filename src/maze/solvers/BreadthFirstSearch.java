@@ -1,14 +1,10 @@
 /*
- * java -cp build/classes -Xmx512M -XX:+UseParallelGC maze.Maze
- * 
  * @copyright	Copyright (c) 2012 Jonas Amrich
  */
 package maze.solvers;
 
 import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.Deque;
 import maze.utils.Coordinate;
 import maze.utils.Map;
 
@@ -20,14 +16,14 @@ public class BreadthFirstSearch implements Solver {
 	
 	public static final int[] directions = {-1, 1, 0, 0};
 	
-	Map map;
-	ArrayDeque<Node> queue;
-	
 	@Override
-	public List<Coordinate> findPath(int[][] _map) {
+	public Deque<Coordinate> findPath(int[][] _map) {
 
-		map = new Map(_map);
-		queue = new ArrayDeque<Node>();
+		Map map = new Map(_map);
+		
+		// ArrayDeque provides all used operations in amortized constant time
+		// and is faster and more memory efficient than LinkedList
+		Deque<Node> queue = new ArrayDeque<Node>();
 		
 		int sx = map.startPosition[0];
 		int sy = map.startPosition[1];
@@ -36,10 +32,8 @@ public class BreadthFirstSearch implements Solver {
 		map.markVisited(sx, sy);
 		
 		Node node;
-		List path = null;
 		int i, x, y;
 		
-		mainloop:
 		while(!queue.isEmpty())
 		{
 			node = queue.pollFirst();
@@ -54,8 +48,7 @@ public class BreadthFirstSearch implements Solver {
 				{	
 					if(map.isFinal(x, y))
 					{	
-						path = constructPath(queue.getLast());
-						break mainloop;
+						return constructPath(queue.getLast());
 					}
 					
 					queue.add(new Node(x, y, node));
@@ -64,20 +57,19 @@ public class BreadthFirstSearch implements Solver {
 			}
 		}
 	
-		return path;
+		return null;
 	}
 	
-	private List<Coordinate> constructPath(Node node)
+	private Deque<Coordinate> constructPath(Node node)
 	{	
-		List<Coordinate> coordinates = new ArrayList<Coordinate>();
+		Deque<Coordinate> coordinates = new ArrayDeque<Coordinate>();
 		
 		while(node.parent != null)
 		{
-			coordinates.add(new Coordinate(node.x, node.y));
+			coordinates.addFirst(new Coordinate(node.x, node.y));
 			node = node.parent;
 		}
 		
-		Collections.reverse(coordinates);
 		return coordinates;
 	}
 	

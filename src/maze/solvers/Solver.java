@@ -1,7 +1,7 @@
 
 package maze.solvers;
 
-import java.util.List;
+import java.util.Deque;
 import maze.utils.Coordinate;
 
 /**
@@ -10,6 +10,6 @@ import maze.utils.Coordinate;
  */
 public interface Solver {
 	
-	List<Coordinate> findPath(int[][] _map);
+	Deque<Coordinate> findPath(int[][] _map);
 
 }
