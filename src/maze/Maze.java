@@ -4,9 +4,7 @@
 package maze;
 
 import java.awt.image.BufferedImage;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Deque;
 import java.util.logging.Level;
@@ -14,7 +12,7 @@ import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import maze.solvers.BreadthFirstSearch;
 import maze.solvers.Solver;
-import maze.utils.Coordinate;
+import maze.writers.Writer;
 
 /**
  *
@@ -43,6 +41,7 @@ public class Maze {
 		// default start and finish positions fits for grand1 maze
 		int[] start = {0, 1};
 		int[] finish = {map.length - 2, map[0].length - 1};
+		String output = null;
 
 		try {
 
@@ -57,6 +56,10 @@ public class Maze {
 				if (args[i].startsWith("--finish")) {
 					finish[0] = Integer.parseInt(args[i].substring("--finish".length() + 1, args[i].indexOf(":")));
 					finish[1] = Integer.parseInt(args[i].substring(args[i].indexOf(":") + 1));
+				}
+				
+				if (args[i].startsWith("--out=")) {
+					output = args[i].substring("--out=".length());
 				}
 
 			}
@@ -78,8 +81,25 @@ public class Maze {
 
 		System.out.printf("Path found. Size %d, elapsed %.3fs%n", path.size(), (findTime - parseTime) / 1000000000.);
 
-		if (args.length == 2 && !args[1].startsWith("--")) {
-			writeFile(new File(args[1]), path);
+		
+		if (output != null) {
+			
+			System.out.printf("Saving path as %s%n", output);
+			
+			try {
+
+				Writer writer = (Writer) Class.forName("maze.writers." + output + "Writer").newInstance();
+				writer.writePath(path, filename, filename.substring(0, filename.lastIndexOf(".")) + ".solved");
+
+			} catch (ClassNotFoundException ex) {
+				Logger.getLogger(Maze.class.getName()).log(Level.SEVERE, null, ex);
+			} catch (InstantiationException ex) {
+				Logger.getLogger(Maze.class.getName()).log(Level.SEVERE, null, ex);
+			} catch (IllegalAccessException ex) {
+				Logger.getLogger(Maze.class.getName()).log(Level.SEVERE, null, ex);
+			} catch (IOException ex) {
+				Logger.getLogger(Maze.class.getName()).log(Level.SEVERE, null, ex);
+			}
 		}
 
 	}
@@ -113,21 +133,4 @@ public class Maze {
 		return null;
 	}
 
-	private static void writeFile(File file, Deque<Coordinate> path) {
-
-		try {
-			BufferedWriter out = new BufferedWriter(new FileWriter(file));
-
-			while (!path.isEmpty()) {
-				out.write(path.poll().toString());
-				out.newLine();
-			}
-
-			out.close();
-
-		} catch (IOException ex) {
-			System.out.println("An error ocurred while saving path to file.");
-			Logger.getLogger(Maze.class.getName()).log(Level.SEVERE, null, ex);
-		}
-	}
 }
